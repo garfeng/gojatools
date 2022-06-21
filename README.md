@@ -10,6 +10,21 @@ It anaylizes the input go code, then generates a go map, that contains all funcs
 
 Also, it generates a .ts file for code hints.
 
+# Usage
+
+``` shell
+go install -v github.com/garfeng/gojatools/cmd/goja_imports@latest
+
+goja_imports --help
+  -go string
+        dst go file (default "js/js.go")
+  -i string
+        input package path
+  -ja string
+        dst typescript file (default "js/js.ts")
+  -p string
+        dst package name
+```
 
 ## Example
 
