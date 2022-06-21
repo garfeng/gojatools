@@ -25,3 +25,4 @@ vendor/
 examples/images/js
 *.png
 .vscode/
+cmd/goja_imports/goja_imports
