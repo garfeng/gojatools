@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/dop251/goja v0.0.0-20220516123900-4418d4575a41
 	github.com/wzshiming/gotype v0.7.3
+	gocv.io/x/gocv v0.31.0
 )
 
 require (
