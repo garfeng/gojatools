@@ -5,7 +5,9 @@
 package {{.DstPkgName}}
 
 import (
+    {{if or .TypeSpec .ValueSpec .FuncSpec}}
 	origin "{{.SrcPkgName}}"
+	{{end}}
 	"github.com/garfeng/gojatools/importgo"
 )
 
