@@ -59,7 +59,7 @@ type FuncDefine struct {
 }
 
 func importGoPackage(pkgPath, dstPkgName, dstGoFile, dstJSFile string) error {
-	os.Mkdir(tmpPath, 0777)
+	os.Mkdir(tmpPath, ModDir)
 	defer os.RemoveAll(tmpPath)
 
 	imp := gotype.NewImporter()
@@ -147,16 +147,16 @@ func importGoPackage(pkgPath, dstPkgName, dstGoFile, dstJSFile string) error {
 	codeFormated, err := format.Source([]byte(code))
 
 	if err != nil {
-		ioutil.WriteFile(dstGoFile, []byte(code), 0755)
+		ioutil.WriteFile(dstGoFile, []byte(code), ModeCode)
 		fmt.Println("Err of format code: ", err)
 		return err
 	}
 
-	ioutil.WriteFile(dstGoFile, codeFormated, 0755)
+	ioutil.WriteFile(dstGoFile, codeFormated, ModeCode)
 
 	bufJs := bytes.NewBuffer(nil)
 	jsTemplate.ExecuteTemplate(bufJs, "tempJS", tmplData)
-	ioutil.WriteFile(dstJSFile, bufJs.Bytes(), 0755)
+	ioutil.WriteFile(dstJSFile, bufJs.Bytes(), ModeCode)
 
 	return nil
 }
@@ -446,7 +446,7 @@ func GoNumFormat(v ValueDefine) string {
 func runGoCode(code string) (stdout, stderr string, err error) {
 
 	codeName := filepath.Join(tmpPath, "main.go")
-	ioutil.WriteFile(codeName, []byte(code), 0755)
+	ioutil.WriteFile(codeName, []byte(code), ModeCode)
 
 	cmd := exec.Command("go", "run", codeName)
 	wOut := bytes.NewBuffer(nil)

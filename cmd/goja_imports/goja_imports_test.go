@@ -9,7 +9,8 @@ import (
 )
 
 func TestImport(t *testing.T) {
-	os.Mkdir("hello", 0777)
+	os.RemoveAll("hello")
+	os.Mkdir("hello", ModDir)
 	err := importGoPackage("image", "hello", "hello/hello.go", "hello/hello.ts")
 	if err != nil {
 		fmt.Println(err)

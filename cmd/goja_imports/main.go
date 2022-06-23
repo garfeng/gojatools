@@ -24,9 +24,9 @@ func main() {
 	}
 
 	base, _ := filepath.Split(*goPath)
-	os.MkdirAll(base, 0777)
+	os.MkdirAll(base, ModDir)
 	base, _ = filepath.Split(*jsPath)
-	os.MkdirAll(base, 0777)
+	os.MkdirAll(base, ModDir)
 
 	err := importGoPackage(*inPkg, *pkg, *goPath, *jsPath)
 	if err != nil {
