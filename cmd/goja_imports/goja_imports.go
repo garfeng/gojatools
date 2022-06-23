@@ -226,7 +226,6 @@ func ImportTypes(v gotype.Type, pkgPath string, globalImportPkgs map[string]bool
 	}
 
 	methods := []FuncDefine{}
-
 	ImportSubInterafaceMethods(v, globalImportPkgs, &methods, 0)
 
 	tp.Funcs = methods
@@ -294,12 +293,18 @@ func ImportSubInterafaceMethods(v gotype.Type, globalPkg map[string]bool, method
 
 }
 
-func ImportValues(v gotype.Type, pkgPath string, isGlobal bool, valueList *[]ValueDefine) {
+func GetRealDecl(v gotype.Type) gotype.Type {
+	if v.Kind() == gotype.Declaration {
+		return GetRealDecl(v.Declaration())
+	}
+	return v
+}
 
+func ImportValues(v gotype.Type, pkgPath string, isGlobal bool, valueList *[]ValueDefine) {
 	typeName := ""
 
 	if v.Kind() == gotype.Declaration {
-		typeName = v.Declaration().String()
+		typeName = GetRealDecl(v).Kind().String()
 	} else {
 		name := v.Name()
 		s := v.String()
@@ -317,15 +322,18 @@ func ImportValues(v gotype.Type, pkgPath string, isGlobal bool, valueList *[]Val
 		IsGlobal: isGlobal,
 	}
 
-	if tp.TypeName == "int" && tp.Value != "" {
-		value, _ := strconv.ParseFloat(tp.Value, 64)
-		if value > float64(math.MaxInt) || value < float64(math.MinInt) {
+	if isGlobal {
+		if (strings.ToLower(tp.TypeName) == "int") && tp.Value != "" {
+			//		fmt.Println(tp.TypeName, tp.Name, "=", tp.Value)
+			value, _ := strconv.ParseFloat(tp.Value, 64)
+			if value > float64(math.MaxInt) || value < float64(math.MinInt) {
+				tp.ShouldCastType = true
+			}
+		}
+
+		if (strings.ToLower(tp.TypeName) == "int") && tp.Value == "" {
 			tp.ShouldCastType = true
 		}
-	}
-
-	if tp.TypeName == "int" && tp.Value == "" {
-		tp.ShouldCastType = true
 	}
 
 	(*valueList) = append((*valueList), tp)
@@ -422,12 +430,14 @@ func GoNumFormat(v ValueDefine) string {
 			"fmt"
 		)
 		func main() {
-			var u uint64 = origin.%s
-			fmt.Println(u)
+			if origin.%s >= 0 {
+				fmt.Print(1)
+			} else {
+				fmt.Print(-1)
+			}
 		}
 		`
 		code = fmt.Sprintf(codeTmpl2, v.SrcPkg, v.Name)
-
 		stdout, stderr, err := runGoCode(code)
 		if err != nil {
 			fmt.Println(stderr)
@@ -435,9 +445,14 @@ func GoNumFormat(v ValueDefine) string {
 			fmt.Println(err)
 			panic(err)
 		}
-
-		fmt.Println("parse uint64", v.SrcPkg, v.Name, stdout)
-		return fmt.Sprintf("uint64(origin.%s)", v.Name)
+		vfloat, _ := strconv.ParseFloat(stdout, 64)
+		if vfloat >= 0 {
+			fmt.Println("parse uint64", v.SrcPkg, v.Name, stdout)
+			return fmt.Sprintf("uint64(origin.%s)", v.Name)
+		} else {
+			fmt.Println("parse int64", v.SrcPkg, v.Name, stdout)
+			return fmt.Sprintf("int64(origin.%s)", v.Name)
+		}
 	}
 
 	fmt.Println("parse direct", v.SrcPkg, v.Name, stdout)
