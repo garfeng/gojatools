@@ -16,15 +16,10 @@ var (
 	pkgs = map[string]Package{}
 )
 
-type Package map[string]map[string]interface{}
+type Package map[string]interface{}
 
-type PackageScope map[string]interface{}
-
-func Add(name string, namespace string, pkgCore PackageScope) {
-	if pkgs[name] == nil {
-		pkgs[name] = Package{}
-	}
-	pkgs[name][namespace] = pkgCore
+func Add(name string, namespace string, pkgCore Package) {
+	pkgs[name] = pkgCore
 }
 
 func Remove(name string) {
@@ -48,7 +43,10 @@ func (r *requireEngine) Require(name string) interface{} {
 	_, jsPkgName := filepath.Split(name)
 	jsPkgName = strings.ToLower(jsPkgName)
 	jsExt := filepath.Ext(jsPkgName)
-	jsPkgName = jsPkgName[:len(jsPkgName)-len(jsExt)]
+
+	if jsExt == ".js" || jsExt == ".ts" {
+		jsPkgName = jsPkgName[:len(jsPkgName)-len(jsExt)]
+	}
 
 	if v, find := pkgs[jsPkgName]; find {
 		return v
@@ -89,8 +87,8 @@ func ExportRequireToEngine(engine *goja.Runtime) {
 }
 
 func ExportConsoleToEngine(engine *goja.Runtime) {
-	engine.Set("console", PackageScope{
-		"log": func(v ...any) { fmt.Println(v...) },
+	engine.Set("console", Package{
+		"log": fmt.Println,
 	})
 }
 

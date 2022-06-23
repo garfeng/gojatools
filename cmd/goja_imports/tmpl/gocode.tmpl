@@ -21,11 +21,18 @@ type (
 
 var ExportJS_{{.ExportNameTitle}} = map[string]interface{}{
 
+{{if .TypeSpec}}
+	{{range .TypeSpec}}
+	{{.Doc}}
+	"_new{{.Name}}" : func() *origin.{{.Name}} { return new(origin.{{.Name}}) }, {{.Comment}}
+	{{end}}
+{{end}}
+
 {{if .ValueSpec}}
 // Value
 	{{range .ValueSpec}}
 	{{.Doc}}
-	"{{.Name}}" : origin.{{.Name}}, {{.Comment}}
+	"{{.Name}}" : {{GoNumFormat .}}, {{.Comment}} // {{.TypeName}} | {{.Value}}
 	{{end}}
 {{end}}
 
@@ -34,7 +41,7 @@ var ExportJS_{{.ExportNameTitle}} = map[string]interface{}{
 	{{range .FuncSpec}}
 	{{.Doc}}
 	//func {{.Name}}({{range .Ins}} {{.Name}} {{.Type}},{{end}}) {{if .Outs}} ({{range .Outs}}	{{.Name}} {{.Type}}, {{end}}){{end}}
-	"{{.Name}}" : origin.{{.Name}}, {{.Comment}}
+	"{{.Name}}" : {{GoFuncFormat .}}, {{.Comment}}
 	{{end}}
 {{end}}
 

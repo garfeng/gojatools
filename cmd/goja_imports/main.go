@@ -14,19 +14,14 @@ var (
 	jsPath = flag.String("ja", "js/js.ts", "dst typescript file")
 )
 
-func init() {
+func main() {
 	flag.Parse()
 
-}
-
-func main() {
-	fmt.Println(os.Args[0], "--help for help")
 	if pkg == nil || (*pkg) == "" {
+		fmt.Println(os.Args[0], "--help for help")
 		flag.PrintDefaults()
 		return
 	}
-	fmt.Println("Current Args:")
-	fmt.Println("-p", *pkg, "-i", *inPkg, "-go", *goPath, "-ja", *jsPath)
 
 	base, _ := filepath.Split(*goPath)
 	os.MkdirAll(base, 0777)
@@ -36,5 +31,6 @@ func main() {
 	err := importGoPackage(*inPkg, *pkg, *goPath, *jsPath)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(-1)
 	}
 }

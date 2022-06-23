@@ -2,7 +2,13 @@
 // Install by "go get -u -v github.com/garfeng/gojatools/cmd/goja_imports";
 //go:generate goja_imports -p {{.DstPkgName}} -i {{.SrcPkgName}} -go {{.GoFilename}} -ja {{.JSFilename}}
 
-export namespace {{.JSNamespace}} {
+{{if .PkgImports}}
+{{range .PkgImports}}
+import {{JsImportName .}} from "./{{JsImportFormat .}}"
+{{end}}
+{{end}}
+
+namespace {{.JSNamespace}} {
 
 {{if .TypeSpec}}
 // Type
@@ -10,7 +16,8 @@ export namespace {{.JSNamespace}} {
 {{.Doc}}
 export class {{.Name}} { {{.Comment}}
     {{if .Fields}}{{range .Fields}}
-    {{.Name}}: {{jsTypeName .TypeName}} {{.Comment}}
+    {{.Doc}}
+    {{.Name}}: {{jsTypeName .TypeName}}; {{.Comment}}
     {{end}}{{end}}
 
     {{if .Funcs}}{{range .Funcs}}
@@ -21,8 +28,13 @@ export class {{.Name}} { {{.Comment}}
     }
     {{end}}{{end}}
 }
+export function _new{{.Name}}() :{{.Name}} {
+    return origin._new{{.Name}}();
+}
 {{end}}
 {{end}}
+
+
 
 {{if .ValueSpec}} 
 {{range .ValueSpec}}
@@ -40,5 +52,6 @@ export function {{.Name}}({{jsInsFormat .Ins}}) {{jsOutsFormat .Outs}} {
 }
 {{end}}
 {{end}}
-
 }
+
+export default {{.JSNamespace}};
