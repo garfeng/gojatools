@@ -185,6 +185,11 @@ js
 
 ```
 
+## OS support
+
+- [x] Windows (Windows 11 x64)
+- [x] Linux (Kubuntu 22.04 LTS x64)
+- [ ] Darwin (no machine to test)
 
 ## Thanks
 
