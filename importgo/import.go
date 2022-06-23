@@ -88,7 +88,7 @@ func ExportRequireToEngine(engine *goja.Runtime) {
 
 func ExportConsoleToEngine(engine *goja.Runtime) {
 	engine.Set("console", Package{
-		"log": fmt.Println,
+		"log": func(v ...interface{}) { fmt.Println(v...) },
 	})
 }
 

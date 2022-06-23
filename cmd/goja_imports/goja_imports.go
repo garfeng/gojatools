@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
@@ -585,6 +586,10 @@ func GoOutFormat(data []NameAndType) string {
 	return ""
 }
 
+var (
+	arrayRegxp = regexp.MustCompile(`\[.*\]`)
+)
+
 func jsTypeName(typeName string) string {
 	if strings.Contains(typeName, "{") {
 		return "object"
@@ -605,9 +610,15 @@ func jsTypeName(typeName string) string {
 
 	typeName = strings.ReplaceAll(typeName, "*", "")
 	typeName = strings.ReplaceAll(typeName, "interface{}", "any")
-	if strings.Contains(typeName, "[]") {
-		typeName = strings.ReplaceAll(typeName, "[]", "")
-		typeName = typeName + "[]"
+
+	if strings.Contains(typeName, "[") {
+		sliceExt := ""
+		typeName = arrayRegxp.ReplaceAllStringFunc(typeName, func(s string) string {
+			sliceExt += "[]"
+			return ""
+		})
+
+		typeName = typeName + sliceExt
 	}
 
 	return typeName

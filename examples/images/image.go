@@ -7,8 +7,6 @@ import (
 
 	"github.com/dop251/goja"
 	_ "github.com/garfeng/gojatools/examples/images/js"
-	_ "github.com/garfeng/gojatools/examples/images/js/image"
-	_ "github.com/garfeng/gojatools/examples/images/js/io"
 
 	"github.com/garfeng/gojatools/importgo"
 )

@@ -1,8 +1,8 @@
-import {image} from "./js/image"
-import {png} from "./js/image/png"
-import {bytes} from "./js/bytes";
-import {ioutil} from "./js/io/ioutil";
-import {os} from "./js/os";
+import image from "./js/image"
+import png from "./js/image.png"
+import bytes from "./js/bytes";
+import ioutil from "./js/io.ioutil";
+import os from "./js/os";
 
 const size = image.Rect(0, 0, 100, 100);
 
