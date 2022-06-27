@@ -12,6 +12,7 @@ var (
 	inPkg  = flag.String("i", "", "input package path")
 	goPath = flag.String("go", "js/js.go", "dst go file")
 	jsPath = flag.String("ja", "js/js.ts", "dst typescript file")
+	bigInt = flag.Bool("bigInt", false, "has big int")
 )
 
 func main() {

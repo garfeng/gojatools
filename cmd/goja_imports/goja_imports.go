@@ -322,7 +322,7 @@ func ImportValues(v gotype.Type, pkgPath string, isGlobal bool, valueList *[]Val
 		IsGlobal: isGlobal,
 	}
 
-	if isGlobal {
+	if isGlobal && (*bigInt) {
 		if (strings.ToLower(tp.TypeName) == "int") && tp.Value != "" {
 			//		fmt.Println(tp.TypeName, tp.Name, "=", tp.Value)
 			value, _ := strconv.ParseFloat(tp.Value, 64)
