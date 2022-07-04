@@ -221,6 +221,10 @@ func ImportTypes(v gotype.Type, pkgPath string, globalImportPkgs map[string]bool
 					ImportValues(para, pkgPath, false, &fields)
 				}
 			}
+			for i := range fields {
+				name := fields[i].TypeName
+				fields[i].TypeName = strings.Replace(name, "`", "// `", 1)
+			}
 			tp.Fields = fields
 		}
 	}
