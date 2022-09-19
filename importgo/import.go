@@ -88,7 +88,7 @@ func ExportRequireToEngine(engine *goja.Runtime) {
 
 func ExportConsoleToEngine(engine *goja.Runtime) {
 	engine.Set("console", Package{
-		"log": func(v ...interface{}) { fmt.Println(v...) },
+		"log": fmt.Println,
 	})
 }
 
@@ -113,5 +113,7 @@ func FormatCode(code string) string {
 
 		return s
 	})
+
+	code = "(function(){\r\n" + code + "\r\n})()"
 	return code
 }
