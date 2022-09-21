@@ -17,6 +17,16 @@ func TestImport(t *testing.T) {
 	}
 }
 
+func TestImportAnonymousField(t *testing.T) {
+	os.RemoveAll("js")
+	os.Mkdir("js", ModDir)
+	err := importGoPackage("github.com/garfeng/gojatools/cmd/goja_imports/anonymous",
+		"anonymous", "js/anonymous.go", "js/anonymous.ts")
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 type MyError struct{}
 
 func (m *MyError) Error() string {

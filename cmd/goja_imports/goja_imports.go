@@ -179,6 +179,7 @@ func ImportFunc(v gotype.Type, globalImportPkgs map[string]bool, fnList *[]FuncD
 		fn.Ins = []NameAndType{}
 		for i := 0; i < decl.NumIn(); i++ {
 			in := decl.In(i)
+
 			fn.Ins = append(fn.Ins, NameAndType{
 				Name:     in.Name(),
 				TypeName: in.Declaration().String(),
@@ -239,9 +240,12 @@ func ImportTypes(v gotype.Type, pkgPath string, globalImportPkgs map[string]bool
 
 func ImportSubInterafaceMethods(v gotype.Type, globalPkg map[string]bool, methods *[]FuncDefine, padding int) {
 	if v.Kind() != gotype.Interface {
-		if v.NumMethod() > 0 {
-			for i := 0; i < v.NumMethod(); i++ {
-				fn := v.Method(i)
+
+		elem := GetRealElement(v)
+
+		if elem.NumMethod() > 0 {
+			for i := 0; i < elem.NumMethod(); i++ {
+				fn := elem.Method(i)
 				if fn.Kind() == gotype.Declaration {
 					if ast.IsExported(fn.Name()) {
 						ImportFunc(fn, globalPkg, methods)
@@ -259,7 +263,7 @@ func ImportSubInterafaceMethods(v gotype.Type, globalPkg map[string]bool, method
 		for i := 0; i < num; i++ {
 			one := v.Field(i)
 			if one.IsAnonymous() {
-				ImportSubInterafaceMethods(one, globalPkg, methods, padding+2)
+				ImportSubInterafaceMethods(one.Elem(), globalPkg, methods, padding+2)
 			}
 		}
 	}
@@ -495,12 +499,15 @@ func GoNumFormat2(v ValueDefine) string {
 }
 
 func JsImportFormat(name string) string {
-	return strings.ReplaceAll(name, "/", ".")
+	s := strings.ReplaceAll(name, "/", ".")
+	//return s
+	return s[:strings.LastIndex(s, "|")]
 }
 
 func JsImportName(name string) string {
 	_, base := filepath.Split(name)
-	return base
+	//return base
+	return base[strings.LastIndex(base, "|")+1:]
 }
 
 func JsInsFormat(data []NameAndType) string {
@@ -546,15 +553,33 @@ func JsOutsFormat(data []NameAndType) string {
 
 func GetRealElement(v gotype.Type) gotype.Type {
 	kind := v.Kind()
-	if kind == gotype.Ptr || kind == gotype.Slice || kind == gotype.Map {
+	if kind == gotype.Ptr || kind == gotype.Slice || kind == gotype.Map || kind == gotype.Field {
 		return GetRealElement(v.Elem())
 	}
 	return v
 }
 
+func replaceAllExtra(v string) string {
+	// *A.c
+	// []A.c, []*A.c
+	// map[string]*A.c
+	v1 := v[strings.LastIndex(v, "*")+1:]
+	v2 := v1[strings.LastIndex(v1, "]")+1:]
+	return v2
+}
+
 func GoFuncImportsPkgs(fn FuncDefine, pkgMap map[string]bool) {
-	if len(fn.Outs) < 2 {
-		return
+	for _, v := range fn.Outs {
+		typeName := v.TypeName
+		if strings.Contains(typeName, ".") {
+			r := GetRealElement(v.Type)
+			pkgName := r.PkgPath()
+
+			imPkgName := typeName[:strings.Index(typeName, ".")]
+			imPkgName = replaceAllExtra(imPkgName)
+
+			pkgMap[fmt.Sprintf("%s|%s", pkgName, imPkgName)] = true
+		}
 	}
 
 	for _, v := range fn.Ins {
@@ -562,7 +587,11 @@ func GoFuncImportsPkgs(fn FuncDefine, pkgMap map[string]bool) {
 		if strings.Contains(typeName, ".") {
 			r := GetRealElement(v.Type)
 			pkgName := r.PkgPath()
-			pkgMap[pkgName] = true
+
+			imPkgName := typeName[:strings.Index(typeName, ".")]
+			imPkgName = replaceAllExtra(imPkgName)
+
+			pkgMap[fmt.Sprintf("%s|%s", pkgName, imPkgName)] = true
 		}
 	}
 }
@@ -639,6 +668,16 @@ func jsTypeName(typeName string) string {
 
 		typeName = typeName + sliceExt
 	}
+
+	/*
+		if strings.Contains(typeName, ".") {
+			r := GetRealElement(realType)
+			pkgPath := r.PkgPath()
+			_, pkgName := filepath.Split(pkgPath)
+
+			replaceAllExtra()
+		}
+	*/
 
 	return typeName
 }

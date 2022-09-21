@@ -114,6 +114,5 @@ func FormatCode(code string) string {
 		return s
 	})
 
-	code = "(function(){\r\n" + code + "\r\n})()"
 	return code
 }

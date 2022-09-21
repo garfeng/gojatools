@@ -68,7 +68,7 @@ goja_imports -p js -i go/types -go js/go.types.go -ja js/go.types.ts
 goja_imports -p js -i hash -go js/hash.go -ja js/hash.ts
 goja_imports -p js -i hash/adler32 -go js/hash.adler32.go -ja js/hash.adler32.ts
 goja_imports -p js -i hash/crc32 -go js/hash.crc32.go -ja js/hash.crc32.ts
-goja_imports -p js -i hash/crc64 -go js/hash.crc64.go -ja js/hash.crc64.ts
+goja_imports -p js -i hash/crc64 -go js/hash.crc64.go -ja js/hash.crc64.ts -bigInt true
 goja_imports -p js -i hash/fnv -go js/hash.fnv.go -ja js/hash.fnv.ts
 goja_imports -p js -i html -go js/html.go -ja js/html.ts
 goja_imports -p js -i html/template -go js/html.template.go -ja js/html.template.ts
@@ -82,9 +82,11 @@ goja_imports -p js -i image/png -go js/image.png.go -ja js/image.png.ts
 goja_imports -p js -i index/suffixarray -go js/index.suffixarray.go -ja js/index.suffixarray.ts
 goja_imports -p js -i io -go js/io.go -ja js/io.ts
 goja_imports -p js -i io/ioutil -go js/io.ioutil.go -ja js/io.ioutil.ts
+goja_imports -p js -i io/fs -go js/io.fs.go -ja js/io.fs.ts
+
 goja_imports -p js -i log -go js/log.go -ja js/log.ts
 goja_imports -p js -i log/syslog -go js/log.syslog.go -ja js/log.syslog.ts
-goja_imports -p js -i math -go js/math.go -ja js/math.ts
+goja_imports -p js -i math -go js/math.go -ja js/math.ts -bigInt true
 goja_imports -p js -i math/big -go js/math.big.go -ja js/math.big.ts
 goja_imports -p js -i math/cmplx -go js/math.cmplx.go -ja js/math.cmplx.ts
 goja_imports -p js -i math/rand -go js/math.rand.go -ja js/math.rand.ts
