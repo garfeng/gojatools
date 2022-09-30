@@ -28,7 +28,7 @@ export class {{.Name}} { {{.Comment}}
     }
     {{end}}{{end}}
 }
-export function _new{{.Name}}() :{{.Name}} {
+export function _new{{.Name}}(src: {{.Name}}) :{{.Name}} {
     return origin._new{{.Name}}();
 }
 {{end}}

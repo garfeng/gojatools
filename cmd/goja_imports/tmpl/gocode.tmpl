@@ -25,8 +25,14 @@ var ExportJS_{{.ExportNameTitle}} = map[string]interface{}{
 
 {{if .TypeSpec}}
 	{{range .TypeSpec}}
-	{{.Doc}}
-	"_new{{.Name}}" : func() *origin.{{.Name}} { return new(origin.{{.Name}}) }, {{.Comment}}
+	{{.Doc}} 
+	{{.Comment}}
+	"_new{{.Name}}" : func(src *origin.{{.Name}}) *origin.{{.Name}} {  
+		if src == nil {
+			return new(origin.{{.Name}}) 
+		}
+		return src
+	}, 
 	{{end}}
 {{end}}
 

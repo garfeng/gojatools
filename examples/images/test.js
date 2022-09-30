@@ -4,7 +4,14 @@ import bytes from "./js/bytes";
 import ioutil from "./js/io.ioutil";
 import os from "./js/os";
 
-const size = image.Rect(0, 0, 100, 100);
+const size = image._newRectangle({
+    Min: {
+        X: 0, Y:0,
+    }, 
+    Max:{
+        X:100, Y: 100,
+    }
+});
 
 let src = image.NewRGBA(size);
 
